@@ -1,7 +1,8 @@
 package main.core.client;
 
-import java.io.DataInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 public class Client {
 	Socket socket;
 	int port;
-	DataInputStream inFromServer;
+	BufferedReader inFromServer;
 	PrintStream outToServer;
 	
 	ArrayList<String> fromServerData;
@@ -29,9 +30,10 @@ public class Client {
 		fromServerData = new ArrayList<String>();
 		running = true;
 		send();
+		receive();
 	}
 	
-	public void sendMsg(String msg){
+	public void sendMessage(String msg){
 		toSendData.add(msg);
 	}
 	
@@ -49,9 +51,27 @@ public class Client {
 		};send.start();
 	}
 	
+	public void receive(){
+		receive = new Thread(){
+			public void run(){
+				while(running){
+					if (socket.isConnected()) {
+						try {
+							String x = inFromServer.readLine();
+							fromServerData.add(x);
+						} catch (IOException e) {
+							//disconnect();
+							//e.printStackTrace();
+						}
+					}
+				}
+			}
+		};receive.start();
+	}
+	
 	private void createSocketInterface(Socket clientSocket){
 		try {
-			inFromServer = new DataInputStream(clientSocket.getInputStream());
+			inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			outToServer = new PrintStream(clientSocket.getOutputStream());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -84,5 +104,14 @@ public class Client {
 		}
 		
 		return socket;
+	}
+	
+	public String getNextMessage() {
+		String msg = "";
+		if (fromServerData.size() > 0) {
+			msg = fromServerData.get(0);
+			fromServerData.remove(0);
+		}
+		return msg;
 	}
 }
