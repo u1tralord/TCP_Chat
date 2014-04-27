@@ -1,4 +1,4 @@
-package main.core.server;
+package broken.main.core.server;
 
 public class StartServer {
 	public static void main(String[] args){

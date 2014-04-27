@@ -1,4 +1,4 @@
-package main.core.client;
+package broken.main.core.client;
 
 import java.util.Scanner;
 
@@ -9,7 +9,7 @@ public class StartClient2 {
 		c = new Client("localhost", 1234);
 		while(true){
 			String x = c.getNextMessage();
-			if(!x.equals("") && x != null)
+			if(!x.equals("") || x != null)
 				System.out.println(x);
 		}
 	}
@@ -18,15 +18,17 @@ public class StartClient2 {
 		Thread send = new Thread(){
 			public void run(){
 				Scanner input = new Scanner(System.in);
-				String data = "";
+				String data = null;
 				while(!data.equals("/done")){
 					data = input.nextLine();
 					
 					if(data.equals("/get")){
 						System.out.println(c.fromServerData);
 					}
-					else
-						c.sendMessage(data);
+					else{
+						if(data != null)
+							c.sendMessage(data);
+					}
 				}
 				input.close();
 			}

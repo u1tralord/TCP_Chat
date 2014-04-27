@@ -1,4 +1,4 @@
-package main.core.client;
+package broken.main.core.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -107,7 +107,7 @@ public class Client {
 	}
 	
 	public String getNextMessage() {
-		String msg = "";
+		String msg = null;
 		if (fromServerData.size() > 0) {
 			msg = fromServerData.get(0);
 			fromServerData.remove(0);

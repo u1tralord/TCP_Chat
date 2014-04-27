@@ -1,4 +1,4 @@
-package main.core.server;
+package broken.main.core.server;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -27,23 +27,31 @@ public class ClientThread implements Runnable {
 		fromClientData = new ArrayList<String>();
 
 		System.out.println("Client Connected");
-		run = new Thread(this, "Client Thread");
+		running = true;
+		send();
+		receive();
+		run = new Thread(this);
 		run.start();
 	}
-
+  
 	public void run() {
-		running = true;
-		outToClient.println("Name: ");
+		toSendData.add("Name: ");
+		//outToClient.println("Name: ");
 
-		System.out.println("WAITING FOR NAME FROM CLIENT");
-		try {
+		
+		/*try {
 			name = inFromClient.readLine();
 			System.out.println(name);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}*/
+		String temp = null;
+		while(temp == null){
+			temp = getNextMessage();
+			System.out.println("WAITING FOR NAME FROM CLIENT");
 		}
-		send();
-		receive();
+		System.out.println(temp);
+		System.out.println("GOT IT");
 	}
 	
 	public void send() {
@@ -81,7 +89,7 @@ public class ClientThread implements Runnable {
 	}
 
 	public String getNextMessage() {
-		String msg = "";
+		String msg = null;
 		if (fromClientData.size() > 0) {
 			msg = fromClientData.get(0);
 			fromClientData.remove(0);
